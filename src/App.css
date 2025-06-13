@@ -1,0 +1,68 @@
+/* src/App.css */
+
+/* Global styles for the body to ensure consistent font and margin */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6; /* A light, soft background */
+    color: #333; /* Default text color */
+}
+
+/* Styles for the navigation bar */
+.navbar {
+    padding: 10px 20px;
+    background: #333; /* Dark background */
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+    padding: 5px 0; /* Add some padding for clickable area */
+    transition: color 0.3s ease; /* Smooth transition for hover */
+}
+
+.nav-link:hover {
+    color: #e0e0e0; /* Slightly lighter on hover */
+}
+
+/* Adjust specific margin for the last link in a group */
+.nav-right .nav-link:last-child {
+    margin-right: 0;
+}
+
+.logout-button {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em; /* Match link font size */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: white;
+    color: #333;
+}
+
+/* Basic styling for content area below navbar */
+.content-area {
+    padding: 20px;
+    max-width: 1200px; /* Optional: Max width for main content */
+    margin: 20px auto; /* Center the content area with top/bottom margin */
+    background-color: #ffffff; /* White background for content */
+    border-radius: 8px; /* Slightly rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* More pronounced shadow for content box */
+}

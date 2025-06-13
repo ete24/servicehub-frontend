@@ -1,0 +1,311 @@
+/* src/components/ProviderDashboard.css */
+
+/* General Styling & Layout */
+.provider-dashboard {
+    padding: 30px; /* Increased padding */
+    max-width: 1200px;
+    margin: 30px auto; /* Increased margin */
+    background-color: #f0f2f5; /* Slightly darker light background for the whole dashboard */
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+    color: #333;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 40px; /* More space below header */
+    color: #2c3e50; /* Darker, professional header color */
+    font-size: 2.5em; /* Larger header */
+    font-weight: 700; /* Bolder */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Info paragraphs below header */
+.plan-info, .service-count {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #555;
+}
+.plan-info strong {
+    color: #007bff; /* Highlight current plan */
+}
+
+/* Section styling (e.g., for Add Service form, My Services list) */
+.dashboard-section {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px; /* Slightly more rounded */
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); /* Stronger inner shadow */
+    margin-bottom: 40px; /* More space between sections */
+    border-top: 5px solid #007bff; /* Accent border on top of each section */
+}
+
+.dashboard-section h3 {
+    color: #007bff; /* Primary color for section headings */
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.9em; /* Slightly larger */
+    border-bottom: 2px solid #e0e0e0; /* Lighter underline */
+    padding-bottom: 15px;
+    text-align: center; /* Center section titles */
+}
+
+/* Service Limit Message & Upgrade Banner */
+.service-limit-upgrade-banner {
+    background-color: #ffe0b2; /* Light orange for attention */
+    color: #e65100; /* Darker orange text */
+    border: 1px solid #ffcc80;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px; /* More space */
+    font-size: 1.2em; /* Larger font */
+    text-align: center;
+    font-weight: bold;
+    display: flex; /* Use flexbox for banner layout */
+    flex-direction: column; /* Stack message and button */
+    align-items: center; /* Center items horizontally */
+    gap: 15px; /* Space between message and button */
+}
+
+.service-limit-upgrade-banner .warning {
+    color: #d32f2f; /* Even more prominent red for warning text within banner */
+    margin-bottom: 0; /* Remove default margin */
+}
+
+.upgrade-button {
+    background-color: #ff9800; /* Orange for upgrade button */
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.1em;
+    border-radius: 7px;
+    transition: background-color 0.3s ease;
+}
+
+.upgrade-button:hover {
+    background-color: #f57c00;
+    transform: translateY(-2px);
+}
+
+/* Form & Button Styling (General) */
+.form-group {
+    margin-bottom: 20px; /* Increased margin */
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.95em;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #c0c0c0; /* Lighter border */
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fdfdfd; /* Slightly off-white background */
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px; /* Slightly taller textarea */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Subtle focus glow */
+    outline: none;
+}
+
+/* General Button Styling */
+.button {
+    padding: 10px 20px; /* Slightly larger padding */
+    border: none;
+    border-radius: 6px; /* Consistent rounded corners */
+    cursor: pointer;
+    font-size: 1em; /* Consistent font size */
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow on buttons */
+}
+
+.button:hover {
+    transform: translateY(-2px); /* More pronounced lift effect */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.button:disabled {
+    background-color: #cccccc !important; /* Important to override specific button styles */
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+/* Specific Button Styles - THESE ARE THE ONES THAT SHOULD MATCH JSX */
+.primary-button {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+.primary-button:hover { background-color: #0056b3; }
+
+.secondary-button {
+    background-color: #6c757d; /* Grey */
+    color: white;
+}
+.secondary-button:hover { background-color: #5a6268; }
+
+.edit-button {
+    background-color: #ffc107; /* Yellow */
+    color: #333;
+}
+.edit-button:hover { background-color: #e0a800; }
+
+.delete-button {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+.delete-button:hover { background-color: #c82333; }
+
+/* Add Service Form Specifics */
+.add-service-section {
+    position: relative; /* For toggle button positioning if needed */
+}
+
+.toggle-add-service-form {
+    background-color: #28a745; /* Green for toggle button */
+    color: white;
+    width: auto; /* Allow button to size itself */
+    padding: 12px 25px;
+    margin: 0 auto 25px auto; /* Center button and add space below */
+    display: block; /* Make it a block element to center */
+}
+
+.toggle-add-service-form:hover {
+    background-color: #218838;
+}
+
+.add-service-form-container { /* Container that hides/shows */
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.add-service-submit-button { /* Specific style for the submit button (if you use this class explicitly) */
+    width: 100%;
+    background-color: #007bff; /* Blue */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    margin-top: 20px;
+}
+.add-service-submit-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Message Styling (Success/Error) */
+.status-message.success, .add-service-message.success {
+    color: #28a745; /* Green */
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.status-message.error, .add-service-message.error {
+    color: #dc3545; /* Red */
+    font-weight: bold;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Service List Styling */
+.service-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Slightly wider cards */
+    gap: 25px; /* More space between cards */
+}
+
+.service-item {
+    background-color: #e8f5e9; /* Very light green for service cards */
+    border: 1px solid #c8e6c9; /* Green border */
+    border-radius: 12px; /* More rounded corners */
+    padding: 25px; /* Increased padding */
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.1); /* Soft green shadow */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.service-item:hover {
+    transform: translateY(-7px); /* More pronounced lift effect */
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+}
+
+.service-item h4 {
+    color: #388e3c; /* Darker green for service name */
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.6em; /* Slightly larger */
+    word-break: break-word;
+}
+
+.service-item p {
+    color: #555;
+    margin-bottom: 6px;
+    font-size: 1em; /* Standard font size */
+    line-height: 1.6;
+}
+
+.service-item p strong {
+    color: #333;
+}
+
+.service-item p:last-of-type {
+    margin-bottom: 20px; /* Space before buttons */
+}
+
+.service-actions {
+    display: flex;
+    gap: 12px; /* More space between action buttons */
+    margin-top: auto;
+    padding-top: 15px; /* Space above buttons */
+    border-top: 1px solid #f0f0f0; /* Separator above buttons */
+}
+
+/* Edit form actions within the service item */
+.edit-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: space-between; /* Space out buttons */
+}
+
+.edit-form-actions .button {
+    flex-grow: 1; /* Make buttons expand */
+}
+
+.no-services-message {
+    text-align: center;
+    font-size: 1.2em;
+    color: #777;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+}
