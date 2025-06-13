@@ -1,5 +1,5 @@
 // src/components/ProviderDashboard.jsx
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // FIXED: Removed ' => 'react'
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.jsx'; // Ensure .jsx extension
 import { useNavigate } from 'react-router-dom';
@@ -26,18 +26,18 @@ const ProviderDashboard = ({ provider, token }) => {
     // Error state for displaying any fetch errors
     const [error, setError] = useState(null);
 
-    // NEW STATE: Controls the visibility of the Add/Edit Service form
-    const [showServiceForm, setShowServiceForm] = useState(false);
+    // NEW STATE: Controls the visibility of the Add/Edit Service form MODAL
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // State for the Add/Edit Service form inputs
+    // State for the Add/Edit Service form inputs.
+    // Availability is now an object mapping day to time string or empty string.
     const [serviceForm, setServiceForm] = useState({
         name: '',
         category: '',
         description: '',
         price: '',
-        // Availability stored as an object for checkbox management in the form
-        availability: {
-            monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, saturday: false, sunday: false,
+        availability: { // Default empty time for each day
+            monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '',
         },
         image_url: '',
     });
@@ -111,7 +111,7 @@ const ProviderDashboard = ({ provider, token }) => {
                 ...prev,
                 availability: {
                     ...prev.availability,
-                    [day]: checked
+                    [day]: value // For text inputs, use the value directly
                 }
             }));
         } else {
@@ -150,21 +150,17 @@ const ProviderDashboard = ({ provider, token }) => {
                 }
             };
 
-            const formattedAvailability = Object.keys(serviceForm.availability).filter(day => serviceForm.availability[day]);
             const payload = {
                 ...serviceForm,
-                availability: formattedAvailability
+                availability: serviceForm.availability // Send the object directly
             };
 
             if (isEditing) {
-                // For edit, backend handles 'pending_edit' status based on plan
                 response = await axios.put(`${API_BASE_URL}/providers/services/${editServiceId}`, payload, config);
             } else {
-                // For add, backend handles 'pending' status based on plan
                 response = await axios.post(`${API_BASE_URL}/providers/services`, payload, config);
             }
 
-            // --- Enhanced message based on backend response and plan ---
             let successMsg = response.data.message || 'Service saved successfully!';
             if (providerProfile && (providerProfile.subscription_plan === 'Free' || providerProfile.subscription_plan === 'Basic Pro')) {
                 if (isEditing) {
@@ -173,7 +169,6 @@ const ProviderDashboard = ({ provider, token }) => {
                     successMsg = 'Service added successfully. Awaiting admin approval.';
                 }
             } else {
-                // For Premium/Elite Pro, direct success message
                 successMsg = response.data.message || 'Service saved successfully!';
             }
             setFormMessage(successMsg);
@@ -186,9 +181,9 @@ const ProviderDashboard = ({ provider, token }) => {
             resetServiceForm();
             setIsEditing(false);
             setEditServiceId(null);
-            setShowServiceForm(false); 
+            setIsModalOpen(false); // <--- NEW: Close the modal on successful submission
 
-        } /* Rest of your try-catch block for handleFormSubmit */
+        } 
         catch (err) {
             console.error('Error saving service:', err);
             setFormMessage(err.response?.data?.error || err.response?.data?.message || 'Failed to save service.');
@@ -197,40 +192,39 @@ const ProviderDashboard = ({ provider, token }) => {
 
     // --- Service Actions: Edit ---
     const handleEditService = (service) => {
-        const availabilityObject = {
-            monday: service.availability.includes('monday'),
-            tuesday: service.availability.includes('tuesday'),
-            wednesday: service.availability.includes('wednesday'),
-            thursday: service.availability.includes('thursday'),
-            friday: service.availability.includes('friday'),
-            saturday: service.availability.includes('saturday'),
-            sunday: service.availability.includes('sunday'),
-        };
+        console.log('Attempting to edit service:', service); 
+        
+        const availabilityForForm = {};
+        Object.keys(serviceForm.availability).forEach(day => {
+            availabilityForForm[day] = service.availability?.[day] || '';
+        });
 
         setServiceForm({
             name: service.name,
             category: service.category,
             description: service.description,
             price: service.price,
-            availability: availabilityObject,
+            availability: availabilityForForm,
             image_url: service.image_url || '',
         });
         setIsEditing(true);
         setEditServiceId(service.id);
         setFormMessage('');
-        setShowServiceForm(true); 
+        setIsModalOpen(true); // <--- NEW: Open the modal when editing
+        console.log('Edit form opened for service ID:', service.id);
     };
 
     // --- Service Actions: Delete ---
     const handleDeleteService = async (serviceId) => {
+        console.log('Attempting to delete service with ID:', serviceId); 
         if (window.confirm("Are you sure you want to request deletion for this service?")) {
+            console.log('User confirmed deletion for service ID:', serviceId);
             try {
-                // Backend's requestDeletion handles status change to 'pending_deletion' or direct delete
                 const response = await axios.delete(`${API_BASE_URL}/providers/services/${serviceId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
+                console.log('Delete API response:', response.data);
 
-                // --- Enhanced message based on backend response and plan ---
                 let successMsg = response.data.message || 'Service deletion processed.';
                 if (providerProfile && (providerProfile.subscription_plan === 'Free' || providerProfile.subscription_plan === 'Basic Pro')) {
                     successMsg = 'Service deletion requested successfully. Awaiting admin approval.';
@@ -243,20 +237,25 @@ const ProviderDashboard = ({ provider, token }) => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setServices(Array.isArray(updatedServicesResponse.data) ? updatedServicesResponse.data : []);
+                console.log('Services re-fetched after deletion.');
+
             } catch (err) {
-                console.error('Error deleting service:', err);
+                console.error('Error deleting service:', err.response?.data || err.message);
                 setFormMessage(err.response?.data?.error || err.response?.data?.message || 'Failed to delete service.');
             }
+        } else {
+            console.log('User cancelled deletion.');
         }
     };
 
-    // --- Form Actions: Cancel Edit ---
-    const handleCancelEdit = () => {
+    // --- Form Actions: Cancel Edit / Close Modal ---
+    const handleCloseModal = () => { // <--- NEW: Function to close modal
+        console.log('Closing modal and resetting form.');
         resetServiceForm();
         setIsEditing(false);
         setEditServiceId(null);
         setFormMessage('');
-        setShowServiceForm(false); 
+        setIsModalOpen(false); // <--- NEW: Close the modal
     };
 
     // Helper function to reset the service form to its initial empty state
@@ -267,7 +266,7 @@ const ProviderDashboard = ({ provider, token }) => {
             description: '',
             price: '',
             availability: {
-                monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, saturday: false, sunday: false,
+                monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '',
             },
             image_url: '',
         });
@@ -303,74 +302,79 @@ const ProviderDashboard = ({ provider, token }) => {
 
             <hr/>
 
-            {/* NEW: Button to toggle the Add/Edit Service Form visibility */}
-            {!showServiceForm && (
-                <button 
-                    onClick={() => {
-                        setShowServiceForm(true); // Show the form
-                        resetServiceForm(); // Clear the form when opening for a new service
-                        setIsEditing(false); // Ensure it's in "Add" mode
-                        setEditServiceId(null);
-                        setFormMessage(''); // Clear any previous messages
-                    }}
-                    className="primary-button button add-service-toggle-button" // Add a specific class for styling
-                >
-                    Add New Service
-                </button>
-            )}
+            {/* Button to open the Add New Service Form Modal */}
+            <button 
+                onClick={() => {
+                    setIsModalOpen(true); // Open the modal
+                    resetServiceForm(); // Clear form for new service
+                    setIsEditing(false); // Ensure it's in "Add" mode
+                    setEditServiceId(null);
+                    setFormMessage(''); // Clear any previous messages
+                }}
+                className="primary-button button add-service-toggle-button" 
+            >
+                Add New Service
+            </button>
 
-            {/* Service Form Section - Conditionally rendered */}
-            {showServiceForm && (
-                <div className="dashboard-section service-form-section">
-                    <h3>{isEditing ? 'Edit Service' : 'Add New Service'}</h3>
-                    {formMessage && <p className={`form-message ${formMessage.includes('successfully') || formMessage.includes('submitted') || formMessage.includes('approval') || formMessage.includes('requested') ? 'success' : 'error'}`}>{formMessage}</p>}
-                    
-                    <form onSubmit={handleFormSubmit} className="service-form">
-                        <div className="form-group">
-                            <label htmlFor="name">Service Name:</label>
-                            <input type="text" id="name" name="name" value={serviceForm.name} onChange={handleFormChange} required />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="category">Category:</label>
-                            <input type="text" id="category" name="category" value={serviceForm.category} onChange={handleFormChange} required />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="description">Description:</label>
-                            <textarea id="description" name="description" value={serviceForm.description} onChange={handleFormChange} required></textarea>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="price">Price:</label>
-                            <input type="number" id="price" name="price" value={serviceForm.price} onChange={handleFormChange} step="0.01" required />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="image_url">Image URL (Optional):</label>
-                            <input type="text" id="image_url" name="image_url" value={serviceForm.image_url} onChange={handleFormChange} />
-                        </div>
-                        {/* Availability checkboxes */}
-                        <div className="form-group availability-group">
-                            <label>Availability:</label>
-                            {Object.keys(serviceForm.availability).map(day => (
-                                <label key={day} className="checkbox-label">
-                                    <input
-                                        type="checkbox"
-                                        name={`availability.${day}`}
-                                        checked={serviceForm.availability[day]}
-                                        onChange={handleFormChange}
-                                    />
-                                    {day.charAt(0).toUpperCase() + day.slice(1)} {/* Capitalize day name */}
-                                </label>
-                            ))}
-                        </div>
+            {/* Service Form MODAL - Conditionally rendered */}
+            {isModalOpen && (
+                <div className="modal-overlay"> {/* Styling for overlay */}
+                    <div className="modal-content"> {/* Styling for modal box */}
+                        <button className="modal-close-button" onClick={handleCloseModal}>&times;</button> {/* Close button */}
+                        <h3>{isEditing ? 'Edit Service' : 'Add New Service'}</h3>
+                        {formMessage && <p className={`form-message ${formMessage.includes('successfully') || formMessage.includes('submitted') || formMessage.includes('approval') || formMessage.includes('requested') ? 'success' : 'error'}`}>{formMessage}</p>}
+                        
+                        <form onSubmit={handleFormSubmit} className="service-form">
+                            <div className="form-group">
+                                <label htmlFor="name">Service Name:</label>
+                                <input type="text" id="name" name="name" value={serviceForm.name} onChange={handleFormChange} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="category">Category:</label>
+                                <input type="text" id="category" name="category" value={serviceForm.category} onChange={handleFormChange} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="description">Description:</label>
+                                <textarea id="description" name="description" value={serviceForm.description} onChange={handleFormChange} required></textarea>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="price">Price:</label>
+                                <input type="number" id="price" name="price" value={serviceForm.price} onChange={handleFormChange} step="0.01" required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="image_url">Image URL (Optional):</label>
+                                <input type="text" id="image_url" name="image_url" value={serviceForm.image_url} onChange={handleFormChange} />
+                            </div>
+                            {/* Availability inputs for each day with time */}
+                            <div className="form-group">
+                                <label className="block-label">Availability:</label>
+                                <p className="hint-text">Enter time range (e.g., "9am-5pm") or "Closed" for each day.</p>
+                                {Object.keys(serviceForm.availability).map(day => (
+                                    <div key={day} className="availability-day-input-row">
+                                        <label htmlFor={`availability-${day}`}>{day.charAt(0).toUpperCase() + day.slice(1)}:</label>
+                                        <input
+                                            type="text"
+                                            id={`availability-${day}`}
+                                            name={`availability.${day}`}
+                                            value={serviceForm.availability[day]}
+                                            onChange={handleFormChange}
+                                            placeholder="e.g. 9am-5pm or Closed"
+                                            className="availability-time-input"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
 
-                        <div className="form-actions">
-                            <button type="submit" className="primary-button button">
-                                {isEditing ? 'Update Service' : 'Add Service'}
-                            </button>
-                            <button type="button" className="secondary-button button" onClick={handleCancelEdit}>
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
+                            <div className="form-actions">
+                                <button type="submit" className="primary-button button">
+                                    {isEditing ? 'Update Service' : 'Add Service'}
+                                </button>
+                                <button type="button" className="secondary-button button" onClick={handleCloseModal}> {/* Changed to close modal */}
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
@@ -390,14 +394,15 @@ const ProviderDashboard = ({ provider, token }) => {
                                 <p>Category: {service.category}</p>
                                 <p>Description: {service.description}</p>
                                 <p>Price: ${service.price}</p>
-                                {/* Display formatted availability */}
-                                <p>Availability: {
-                                    Array.isArray(service.availability)
-                                        ? service.availability
-                                            .map(day => day.charAt(0).toUpperCase() + day.slice(1))
-                                            .join(', ') || 'N/A'
-                                        : 'N/A'
-                                }</p>
+                                {/* Display formatted availability with times */}
+                                <p>Availability:</p>
+                                <ul className="availability-list">
+                                    {Object.entries(service.availability || {}).map(([day, time]) => (
+                                        <li key={day}>
+                                            <strong>{day.charAt(0).toUpperCase() + day.slice(1)}:</strong> {time || 'N/A'}
+                                        </li>
+                                    ))}
+                                </ul>
                                 {service.image_url && <img src={service.image_url} alt={service.name} className="service-image" />}
                                 
                                 {/* Action buttons for each service */}

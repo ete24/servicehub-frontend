@@ -1,73 +1,154 @@
 /* src/pages/AdminDashboardPage.css */
+
 .admin-dashboard-container {
-    padding: 20px;
+    padding: 30px; /* Increased padding */
     max-width: 1200px;
-    margin: 20px auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 30px auto; /* Increased margin */
+    background-color: #f8f9fa; /* Light background */
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Soft, pronounced shadow */
+    font-family: 'Inter', sans-serif; /* Modern font */
+    color: #343a40; /* Darker text */
 }
 
 .admin-dashboard-container h1 {
-    color: #333;
-    margin-bottom: 15px;
+    color: #0056b3; /* Primary blue for main title */
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    font-weight: 700;
 }
 
-.admin-dashboard-container h2 {
-    color: #555;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.provider-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.provider-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.provider-card h3 {
-    color: #007bff;
+.admin-dashboard-container p {
+    text-align: center;
     margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #6c757d; /* Muted text color */
 }
 
-.provider-card p {
+/* Admin Section Styling - For each major section (Providers, Service Updates, Deletions) */
+.admin-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+    margin-top: 30px; /* Space between sections */
+    border-left: 5px solid #007bff; /* Left accent border for visual separation */
+}
+
+.admin-section h2 {
+    color: #007bff; /* Primary blue for section headings */
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: 600;
+    border-bottom: 1px solid #e9ecef; /* Light separator line */
+    padding-bottom: 15px;
+}
+
+/* List Container (for providers, services) */
+.list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Responsive grid with min width */
+    gap: 25px; /* Space between cards */
+    padding-top: 10px;
+}
+
+/* Card Styling - General styles for provider and service cards */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes action buttons to the bottom */
+}
+
+.card:hover {
+    transform: translateY(-3px); /* Subtle lift on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    color: #495057;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.4em;
+    word-break: break-word; /* Prevents long IDs from breaking layout */
+}
+
+.card p {
+    font-size: 0.95em;
+    color: #555;
     margin-bottom: 5px;
-    color: #666;
+    text-align: left; /* Ensure text inside cards is left-aligned */
 }
 
+.card p strong {
+    color: #343a40;
+}
+
+/* Status Badges - Specific colors for different statuses */
 .status-pending {
-    color: orange;
+    background-color: #ffc107; /* Warning yellow */
+    color: #333;
+    padding: 4px 8px;
+    border-radius: 5px;
     font-weight: bold;
+    font-size: 0.85em;
 }
 
-.provider-actions {
-    margin-top: 15px;
+.status-active {
+    background-color: #28a745; /* Success green */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.status-pending_edit {
+    background-color: #17a2b8; /* Info blue-green for pending updates */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.status-pending_deletion {
+    background-color: #ff6f00; /* Deep orange for pending deletions */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+
+/* Card Actions (Buttons) */
+.card-actions {
+    margin-top: 20px;
     display: flex;
     gap: 10px;
+    justify-content: flex-end; /* Align buttons to the right */
 }
 
-.btn-approve,
-.btn-reject {
-    padding: 8px 15px;
+.card-actions button {
+    padding: 10px 18px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
 }
 
 .btn-approve {
-    background-color: #28a745;
+    background-color: #28a745; /* Green */
     color: white;
 }
 
@@ -76,7 +157,7 @@
 }
 
 .btn-reject {
-    background-color: #dc3545;
+    background-color: #dc3545; /* Red */
     color: white;
 }
 
@@ -84,14 +165,84 @@
     background-color: #c82333;
 }
 
-.admin-dashboard-message,
-.admin-dashboard-error {
-    padding: 20px;
+/* Availability List in Service Card (Admin View) */
+.availability-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    background-color: #f2f2f2; /* Light grey background for the list */
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.availability-list li {
+    font-size: 0.85em;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.availability-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Feedback Messages */
+.admin-dashboard-message {
     text-align: center;
-    color: #777;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #495057;
 }
 
 .admin-dashboard-error {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
     color: #dc3545;
-    font-weight: bold;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.action-message { /* Styling for success/error messages after actions */
+    text-align: center;
+    padding: 12px 20px;
+    margin: 20px auto;
+    border-radius: 8px;
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border: 1px solid #c3e6cb;
+    max-width: 600px;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-dashboard-container {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    .admin-dashboard-container h1 {
+        font-size: 2em;
+    }
+
+    .admin-section {
+        padding: 15px;
+        margin-top: 20px;
+    }
+
+    .admin-section h2 {
+        font-size: 1.5em;
+    }
+
+    .list-container {
+        grid-template-columns: 1fr; /* Stack cards on small screens */
+    }
+
+    .card-actions button {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
 }
