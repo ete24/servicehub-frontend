@@ -1,176 +1,169 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-// Import Navigate from react-router-dom for cleaner protected routes
-import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import RegisterPage from './pages/RegisterPage';
-import LoginPage from './pages/LoginPage';
-import AdminLoginPage from './pages/AdminLoginPage';
-import ProviderDashboard from './components/ProviderDashboard';
-import AdminDashboardPage from './pages/AdminDashboardPage'; // Assuming this component exists
+import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
+import { AuthProvider, AuthContext } from './context/AuthContext.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
+import AdminLoginPage from './pages/AdminLoginPage.jsx';
+import ProviderDashboard from './components/ProviderDashboard.jsx';
+import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import ServiceListingPage from './pages/ServiceListingPage.jsx';
+import ServiceDetailPage from './pages/ServiceDetailPage.jsx';
+import HowItWorksPage from './pages/HowItWorksPage.jsx'; // NEW: Import HowItWorksPage
+import ScrollToTop from './components/ScrollToTop.jsx'; 
+import { jwtDecode } from 'jwt-decode';
 
-import axios from 'axios';
-import './App.css';
-
+// Main App component (wrapper for AppContent)
 function App() {
-    const [user, setUser] = useState(null); // This will hold the provider user data
-    const [admin, setAdmin] = useState(null); // This will hold the admin user data
-    const [loadingUser, setLoadingUser] = useState(true);
-    const navigate = useNavigate();
+    return (
+        <AppContent />
+    );
+}
 
-    // Function to set authentication state for both provider and admin
-    const setAuth = ({ isAuthenticated, user, token, role }) => {
-        if (role === 'provider' && isAuthenticated) {
-            setUser(user);
-            localStorage.setItem('token', token);
-            localStorage.removeItem('adminToken'); // Ensure only one type of token is active
-            setAdmin(null); // Clear admin state
-        } else if (role === 'admin' && isAuthenticated) {
-            setAdmin(user); // 'user' here is actually the 'admin' object from backend response
-            localStorage.setItem('adminToken', token);
-            localStorage.removeItem('token'); // Ensure only one type of token is active
-            setUser(null); // Clear user state
-        } else {
-            // Logout scenario
-            localStorage.removeItem('token');
-            localStorage.removeItem('adminToken');
-            setUser(null);
-            setAdmin(null);
-        }
-    };
-
-    // Function to check if provider is logged in
-    const checkProviderLoginStatus = async () => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            try {
-                const response = await axios.get('http://localhost:5001/api/providers/profile', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setUser(response.data.provider);
-            } catch (error) {
-                console.error('Failed to fetch provider profile:', error);
-                localStorage.removeItem('token');
-                setUser(null);
-            }
-        }
-    };
-
-    // Function to check if admin is logged in
-    const checkAdminLoginStatus = async () => {
-        const adminToken = localStorage.getItem('adminToken');
-        if (adminToken) {
-            try {
-                const decoded = JSON.parse(atob(adminToken.split('.')[1]));
-                // Basic check for admin role from token payload
-                if (decoded && decoded.is_admin) {
-                    setAdmin({
-                        id: decoded.id,
-                        name: decoded.name || 'Administrator', // Use 'Administrator' if name not present in token
-                        email: decoded.email,
-                        is_admin: decoded.is_admin,
-                        // Assuming these might also be in the token for display purposes if needed
-                        subscription_plan: decoded.subscription_plan,
-                        status: decoded.status
-                    });
-                } else {
-                    // Token exists but is not an admin token or corrupted
-                    localStorage.removeItem('adminToken');
-                    setAdmin(null);
-                }
-            } catch (error) {
-                console.error('Failed to verify admin token:', error);
-                localStorage.removeItem('adminToken');
-                setAdmin(null);
-            }
-        }
-    };
-
+// AppContent component to access AuthContext
+function AppContent() {
+    const { user, token, logout, loading } = React.useContext(AuthContext); 
+    
     useEffect(() => {
-        const initializeAuth = async () => {
-            // Check admin status first, then provider status
-            // This order helps prioritize which dashboard to show if both tokens somehow exist
-            await checkAdminLoginStatus();
-            await checkProviderLoginStatus();
-            setLoadingUser(false);
-        };
-        initializeAuth();
-    }, []);
-
-    const handleLogout = () => {
-        setAuth({ isAuthenticated: false, user: null, token: null, role: null });
-        navigate('/login'); // Redirect to provider login after logout
-    };
-
-    if (loadingUser) {
-        return <div className="loading-message">Loading user session...</div>;
-    }
+        console.log('AppContent mounted or user/loading changed. Current user:', user);
+        console.log('Current loading state:', loading);
+    }, [user, loading]);
 
     return (
-        <div>
+        <div className="App">
+            {/* NEW: Place ScrollToTop here to ensure it applies to all routes */}
+            <ScrollToTop /> 
+
+            {/* Navbar */}
             <nav className="navbar">
                 <div className="nav-left">
-                    <Link to="/" className="nav-link">Home</Link>
-                    {user && (
-                        <Link to="/provider/dashboard" className="nav-link">Provider Dashboard</Link>
-                    )}
-                    {admin && (
-                        <Link to="/admin" className="nav-link">Admin Dashboard</Link>
-                    )}
+                    <Link to="/" className="nav-link text-xl font-bold">ServiceHub</Link>
+                    <Link to="/services" className="nav-link">Browse Services</Link>
                 </div>
                 <div className="nav-right">
-                    {user || admin ? (
-                        <button onClick={handleLogout} className="logout-button">Logout</button>
-                    ) : (
+                    {user ? ( // Show Logout and Dashboard links if logged in
                         <>
+                            {user.role === 'provider' && (
+                                <Link to="/dashboard" className="nav-link">Dashboard</Link>
+                            )}
+                            {user.role === 'admin' && (
+                                <Link to="/admin/dashboard" className="nav-link">Admin Dashboard</Link>
+                            )}
+                            <button onClick={logout} className="logout-button">Logout</button>
+                        </>
+                    ) : ( // Show Login, Register, and Admin Login links if not logged in
+                        <>
+                            <Link to="/login" className="nav-link">Login (Provider/Seeker)</Link>
                             <Link to="/register" className="nav-link">Register</Link>
-                            <Link to="/login" className="nav-link">Provider Login</Link>
-                            <Link to="/admin-login" className="nav-link">Admin Login</Link>
+                            <Link to="/admin/login" className="nav-link">Admin Login</Link>
                         </>
                     )}
                 </div>
             </nav>
 
-            <div className="content-area">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/register" element={<RegisterPage />} />
+            <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/services" element={<ServiceListingPage />} />
+                <Route path="/services/:id" element={<ServiceDetailPage />} />
+                <Route path="/how-it-works" element={<HowItWorksPage />} /> {/* NEW: Route for How It Works page */}
 
-                    {/* Original Provider Login Page */}
-                    <Route path="/login" element={<LoginPage setAuth={setAuth} />} />
+                {/* Protected Routes using AuthRedirect as a wrapper */}
+                <Route
+                    path="/dashboard"
+                    element={
+                        <AuthRedirect expectedRole="provider">
+                            <ProviderDashboard provider={user} token={token} />
+                        </AuthRedirect>
+                    }
+                />
+                <Route
+                    path="/admin/dashboard"
+                    element={
+                        <AuthRedirect expectedRole="admin">
+                            <AdminDashboardPage admin={user} token={token} />
+                        </AuthRedirect>
+                    }
+                />
 
-                    {/* NEW ADMIN LOGIN PAGE ROUTE */}
-                    <Route path="/admin-login" element={<AdminLoginPage setAuth={setAuth} />} />
-
-                    {/* Conditional rendering for Provider Dashboard using Navigate */}
-                    <Route
-                        path="/provider/dashboard"
-                        element={
-                            user ? (
-                                <ProviderDashboard provider={user} token={localStorage.getItem('token')} />
-                            ) : (
-                                // Redirect to /login if not a provider
-                                <Navigate replace to="/login" />
-                            )
-                        }
-                    />
-
-                    {/* Conditional rendering for Admin Dashboard using Navigate */}
-                    <Route
-                        path="/admin"
-                        element={
-                            admin ? (
-                                <AdminDashboardPage admin={admin} token={localStorage.getItem('adminToken')} />
-                            ) : (
-                                // Redirect to /admin-login if not an admin
-                                <Navigate replace to="/admin-login" />
-                            )
-                        }
-                    />
-                </Routes>
-            </div>
+                {/* Fallback for unauthorized access attempts to specific routes */}
+                <Route path="/unauthorized" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
         </div>
     );
 }
+
+// AuthRedirect component: Handles authentication and authorization for protected routes
+const AuthRedirect = ({ children, expectedRole }) => {
+    const { user, loading } = React.useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+
+        if (!user) {
+            if (location.pathname !== '/login') {
+                navigate('/login?auth=required', { replace: true });
+            }
+            return;
+        }
+
+        if (user.role !== expectedRole) {
+            if (location.pathname !== '/unauthorized') {
+                navigate('/unauthorized', { replace: true });
+            }
+            return;
+        }
+
+    }, [user, loading, expectedRole, navigate, location.pathname]);
+
+    if (loading) {
+        return <div className="min-h-screen flex items-center justify-center text-xl text-gray-600">Loading protected content...</div>;
+    }
+
+    return user && user.role === expectedRole ? children : null;
+};
+
+// Simple NotFound page (and Unauthorized page for wrong roles)
+const NotFound = () => {
+    const { user, loading } = React.useContext(AuthContext);
+
+    const getRedirectPath = () => {
+        if (loading) return '/';
+        if (!user) return '/login';
+        if (user.role === 'provider') return '/dashboard';
+        if (user.role === 'admin') return '/admin/dashboard';
+        return '/';
+    };
+
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="text-center p-8 bg-white shadow-lg rounded-lg">
+                <h1 className="text-5xl font-bold text-red-600 mb-4">
+                    {location.pathname === '/unauthorized' ? 'Unauthorized Access' : '404 Page Not Found'}
+                </h1>
+                <p className="text-xl text-gray-700 mb-6">
+                    {location.pathname === '/unauthorized' 
+                        ? "You do not have permission to access this page." 
+                        : "The page you are looking for does not exist."}
+                </p>
+                <Link
+                    to={getRedirectPath()}
+                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition"
+                >
+                    Go to {user && !loading ? (user.role === 'admin' ? 'Admin Dashboard' : 'Dashboard') : 'Login'}
+                </Link>
+            </div>
+        </div>
+    );
+};
 
 export default App;

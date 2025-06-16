@@ -1,28 +1,28 @@
 /* src/components/ProviderDashboard.css */
 
 /* General Dashboard Container */
-.provider-dashboard-container { /* Renamed from .provider-dashboard to match JSX */
-    padding: 30px; /* Increased padding */
-    max-width: 1200px;
-    margin: 30px auto; /* Increased margin */
-    background-color: #f0f2f5; /* Slightly darker light background for the whole dashboard */
-    border-radius: 12px; /* More rounded corners */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
-    font-family: 'Inter', sans-serif; /* Modern font, changed from Segoe UI for consistency */
+.provider-dashboard-container { 
+    padding: 30px; 
+    max-width: 1200px; 
+    margin: 30px auto; 
+    background-color: #f0f2f5; 
+    border-radius: 12px; 
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); 
+    font-family: 'Inter', sans-serif; 
     color: #333;
 }
 
 /* Dashboard Header and Info */
 .dashboard-title {
-    color: #2c3e50; /* Darker, professional header color */
+    color: #2c3e50; 
     text-align: center;
-    margin-bottom: 25px; /* Adjusted margin */
-    font-size: 2.2em; /* Adjusted font size */
-    font-weight: 700; /* Bolder */
+    margin-bottom: 25px; 
+    font-size: 2.2em; 
+    font-weight: 700; 
     text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
 }
 
-.welcome-message, .subscription-info { /* Combined info paragraphs */
+.welcome-message, .subscription-info { 
     text-align: center;
     margin-bottom: 10px;
     font-size: 1.1em;
@@ -30,11 +30,11 @@
 }
 
 .subscription-info strong {
-    color: #007bff; /* Highlight current plan */
+    color: #007bff; 
 }
 
 .limit-warning {
-    color: #e53935; /* Red for warnings */
+    color: #e53935; 
     font-weight: 600;
     margin-left: 10px;
 }
@@ -43,7 +43,7 @@
     display: block;
     margin: 0 auto 30px auto;
     padding: 10px 25px;
-    background-color: #f44336; /* Red for logout */
+    background-color: #f44336; 
     color: white;
     border: none;
     border-radius: 8px;
@@ -67,32 +67,32 @@ hr {
 /* Section Styling (e.g., for Add Service form, My Services list) */
 .dashboard-section {
     background-color: #ffffff;
-    padding: 25px; /* Adjusted padding */
+    padding: 25px; 
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Adjusted shadow */
-    margin-bottom: 30px; /* Adjusted space between sections */
-    /* border-top: 5px solid #007bff; /* Removed accent border as modal handles this visually */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); 
+    margin-bottom: 30px; 
 }
 
 .dashboard-section h3 {
-    color: #3949ab; /* Indigo, consistent with the form */
+    color: #3949ab; 
     margin-top: 0;
     margin-bottom: 20px;
-    font-size: 1.8em; /* Adjusted font size */
+    font-size: 1.8em; 
     font-weight: 600;
     text-align: center;
-    /* border-bottom: 2px solid #e0e0e0; /* Removed underline as it's now inside the modal */
-    padding-bottom: 0; /* Adjusted padding */
+    padding-bottom: 0; 
 }
 
 
 /* Form Styling (within modal) */
-.service-form .form-group {
-    margin-bottom: 18px; /* Consistent margin */
-    text-align: left; /* Ensure labels/inputs align left */
+.service-form .form-group,
+.provider-profile-section .form-group { /* Apply to profile edit form too */
+    margin-bottom: 18px; 
+    text-align: left; 
 }
 
-.service-form label {
+.service-form label,
+.provider-profile-section label { /* Apply to profile edit form too */
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
@@ -102,15 +102,17 @@ hr {
 
 .service-form input[type="text"],
 .service-form input[type="number"],
-.service-form textarea {
+.service-form textarea,
+.provider-profile-section input[type="text"], /* Apply to profile edit form too */
+.provider-profile-section input[type="email"] { /* Apply to profile edit form too */
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid #ddd; /* Consistent border */
-    border-radius: 8px; /* Consistent rounded corners */
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
     font-size: 1em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fdfdfd; /* Consistent background */
+    background-color: #fdfdfd; 
 }
 
 .service-form textarea {
@@ -119,8 +121,9 @@ hr {
 }
 
 .service-form input:focus,
-.service-form textarea:focus {
-    border-color: #5c6bc0; /* Lighter indigo */
+.service-form textarea:focus,
+.provider-profile-section input:focus { /* Apply to profile edit form too */
+    border-color: #5c6bc0; 
     box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.2);
     outline: none;
 }
@@ -136,7 +139,7 @@ hr {
 .button {
     padding: 10px 20px;
     border: none;
-    border-radius: 8px; /* Adjusted to 8px for consistency */
+    border-radius: 8px; 
     cursor: pointer;
     font-size: 1em;
     font-weight: bold;
@@ -159,32 +162,32 @@ hr {
 
 /* Specific Button Styles - Match JSX classes */
 .primary-button {
-    background-color: #3f51b5; /* Primary blue for main actions */
+    background-color: #3f51b5; 
     color: white;
 }
 .primary-button:hover { background-color: #303f9f; }
 
 .secondary-button {
-    background-color: #9e9e9e; /* Grey for secondary actions */
+    background-color: #9e9e9e; 
     color: white;
 }
 .secondary-button:hover { background-color: #757575; }
 
 .edit-button {
-    background-color: #4caf50; /* Green for edit */
+    background-color: #4caf50; 
     color: white;
 }
 .edit-button:hover { background-color: #388e3c; }
 
 .delete-button {
-    background-color: #f44336; /* Red for delete */
+    background-color: #f44336; 
     color: white;
 }
 .delete-button:hover { background-color: #d32f2f; }
 
 /* Add Service Toggle Button (not part of modal content) */
-.add-service-toggle-button { /* Renamed for clarity */
-    background-color: #28a745; /* Green */
+.add-service-toggle-button { 
+    background-color: #28a745; 
     color: white;
     width: auto;
     padding: 12px 25px;
@@ -197,7 +200,7 @@ hr {
 }
 
 /* Message Styling (Success/Error) */
-.form-message { /* Combined styling for messages */
+.form-message { 
     padding: 10px 15px;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -206,14 +209,14 @@ hr {
 }
 
 .form-message.success {
-    background-color: #e8f5e9; /* Light green */
-    color: #2e7d32; /* Dark green */
+    background-color: #e8f5e9; 
+    color: #2e7d32; 
     border: 1px solid #a5d6a7;
 }
 
 .form-message.error {
-    background-color: #ffebee; /* Light red */
-    color: #c62828; /* Dark red */
+    background-color: #ffebee; 
+    color: #c62828; 
     border: 1px solid #ef9a9a;
 }
 
@@ -228,15 +231,15 @@ hr {
 }
 
 /* Service List and Cards */
-.services-list { /* Renamed from .service-list to match JSX */
+.services-list { 
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjusted minmax to fit better */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 25px;
     padding: 10px;
 }
 
 .service-card {
-    background-color: #ffffff; /* Consistent background */
+    background-color: #ffffff; 
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 20px;
@@ -244,7 +247,7 @@ hr {
     flex-direction: column;
     gap: 10px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid #eee; /* Light border for separation */
+    border: 1px solid #eee; 
 }
 
 .service-card:hover {
@@ -324,13 +327,13 @@ hr {
 }
 
 .availability-day-input-row label {
-    flex: 0 0 90px; /* Adjusted width for day labels */
-    font-weight: normal; /* Less bold than main labels */
+    flex: 0 0 90px; 
+    font-weight: normal; 
     color: #555;
 }
 
 .availability-time-input {
-    flex: 1; /* Input takes remaining space */
+    flex: 1; 
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -339,19 +342,8 @@ hr {
 }
 
 /* Modal Specific Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure it's on top of other content */
-    backdrop-filter: blur(5px); /* Optional: blur background */
-    overflow-y: auto; /* Allow scrolling if modal content is too long */
+.fixed.inset-0.bg-black.bg-opacity-50 { /* Targeting the overlay */
+    overflow-y: auto; /* Allow overlay to scroll if modal pushes it off screen */
 }
 
 .modal-content {
@@ -359,10 +351,10 @@ hr {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    max-width: 600px; /* Max width for larger screens */
-    width: 90%; /* Responsive width */
+    max-width: 600px; 
+    width: 90%; 
     position: relative;
-    animation: fadeInScale 0.3s ease-out; /* Simple entry animation */
+    animation: fadeInScale 0.3s ease-out; 
     max-height: 90vh; /* Limit height to prevent overflow on small screens */
     overflow-y: auto; /* Enable scrolling if content exceeds height */
 }
@@ -385,6 +377,27 @@ hr {
     color: #333;
     background-color: #f0f0f0;
 }
+
+/* Custom Scrollbar for better UX (optional, but good for modals/message threads) */
+/* For Webkit browsers (Chrome, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scrollbar thumb on hover */
+}
+
 
 /* Optional: Simple animation for modal */
 @keyframes fadeInScale {
@@ -419,7 +432,7 @@ hr {
     }
 
     .services-list {
-        grid-template-columns: 1fr; /* Stack cards on small screens */
+        grid-template-columns: 1fr; 
     }
 
     .modal-content {

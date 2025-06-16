@@ -1,90 +1,36 @@
 /* src/pages/LoginPage.css */
 
+/* This file can be used for specific styles for the LoginPage if needed.
+   Currently, the LoginPage component primarily uses Tailwind CSS classes for styling.
+   You can add custom styles here that are not easily achievable with Tailwind,
+   or override Tailwind defaults for this specific page.
+*/
+
+/* Example: Custom styling for the form container if not fully covered by Tailwind */
+/*
 .login-container {
-    max-width: 400px; /* Constrain width for better readability */
-    margin: 50px auto; /* Center it with some top/bottom margin */
-    padding: 40px;
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for forms */
-    text-align: center; /* Center align text inside container */
-}
-
-.login-container h2 {
-    color: #333;
-    margin-bottom: 30px;
-    font-size: 2em; /* Larger heading */
-}
-
-.form-group {
-    margin-bottom: 20px; /* Space between form elements */
-    text-align: left; /* Align labels and inputs to the left */
-}
-
-.form-group label {
-    display: block; /* Make labels take full width */
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
-}
-
-.form-group input[type="email"],
-.form-group input[type="password"] {
-    width: 100%; /* Full width inputs */
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box; /* Include padding/border in width */
-    transition: border-color 0.3s ease;
-}
-
-.form-group input[type="email"]:focus,
-.form-group input[type="password"]:focus {
-    border-color: #007bff; /* Highlight on focus */
-    outline: none; /* Remove default outline */
-}
-
-.login-button {
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
     width: 100%;
-    padding: 12px 20px;
-    background-color: #007bff; /* Primary blue color */
+}
+*/
+
+/* Example: Custom button styling */
+/*
+.login-button {
+    background-color: #3b82f6;
     color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    cursor: pointer;
+    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    width: 100%;
     transition: background-color 0.3s ease;
-    margin-top: 20px; /* Space above button */
 }
 
 .login-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #2563eb;
 }
-
-.login-button:disabled {
-    background-color: #cccccc; /* Greyed out when disabled */
-    cursor: not-allowed;
-}
-
-.error-message {
-    color: #dc3545; /* Red for errors */
-    margin-top: 15px;
-    font-size: 0.9em;
-}
-
-.toggle-login-link {
-    margin-top: 25px;
-    font-size: 0.95em;
-    color: #666;
-}
-
-.toggle-login-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.toggle-login-link a:hover {
-    text-decoration: underline;
-}
+*/

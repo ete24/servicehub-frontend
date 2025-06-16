@@ -1,103 +1,112 @@
 // src/pages/AdminLoginPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Added useEffect
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import './LoginPage.css'; // You can reuse or create a specific CSS for admin if needed
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx'; // Use the custom useAuth hook
 
-const AdminLoginPage = ({ setAuth }) => {
-    const [formData, setFormData] = useState({
-        email: '', // Admins typically log in with email
-        password: ''
-    });
+const AdminLoginPage = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login, user } = useAuth(); // Access login function and user from AuthContext
 
-    const { email, password } = formData;
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    useEffect(() => {
+        setError('');
+        console.log('AdminLoginPage: Mounted. Current user:', user); // Debug log
+        if (user && user.role === 'admin') { // Check if already logged in as admin
+            console.log('AdminLoginPage: Already logged in as admin, navigating to dashboard.');
+            navigate('/admin/dashboard');
+        }
+    }, [user, navigate]); // Depend on user and navigate for automatic redirection
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        setSuccessMessage('');
-
-        if (!email || !password) {
-            setError('Please enter your email and password.');
-            return;
-        }
+        setLoading(true);
+        console.log('AdminLoginPage: Attempting admin login for email:', email); // Debug log
 
         try {
-            // *** CRITICAL CHANGE: Target the admin login endpoint ***
-            const response = await axios.post('http://localhost:5001/api/admin/login', { email, password });
+            const response = await axios.post('http://localhost:5001/api/admin/login', {
+                email,
+                password,
+            });
 
-            setSuccessMessage(response.data.message);
+            console.log('AdminLoginPage: Backend login response received:', response.data); // Debug log
 
-            // Assuming the backend sends a token and admin data on successful login
-            const adminData = response.data.admin; // Assuming the backend returns the admin object
-            const token = response.data.token;
+            const { token, admin } = response.data; // Assuming backend returns token and admin data
+            // The admin token payload should ideally already contain { role: 'admin' }
+            login(token, { ...admin, role: 'admin' }); // Ensure role is set in AuthContext's user state
 
-            localStorage.setItem('adminToken', token);
-            // It's good practice to also clear provider token if admin logs in via dedicated admin page
-            localStorage.removeItem('token');
+            console.log('AdminLoginPage: Admin login successful. Navigating to /admin/dashboard.');
+            navigate('/admin/dashboard'); // Redirect to admin dashboard
 
-            // *** CRITICAL CHANGE: Update authentication state with 'admin' role ***
-            if (setAuth) {
-                setAuth({
-                    isAuthenticated: true,
-                    user: adminData, // Pass the actual admin data
-                    token: token,
-                    role: 'admin' // Explicitly set role to 'admin'
-                });
-            }
-
-            // *** CRITICAL CHANGE: Redirect to the admin dashboard ***
-            navigate('/admin');
         } catch (err) {
-            console.error('Admin login error:', err);
-            if (err.response && err.response.data && err.response.data.error) {
-                setError(err.response.data.error);
+            console.error('AdminLoginPage: Admin login error caught:', err); // Log full error object
+            if (err.response) {
+                console.error('AdminLoginPage: Error response data:', err.response.data);
+                console.error('AdminLoginPage: Error response status:', err.response.status);
+                setError(err.response.data.error || err.response.data.message || 'An unexpected error occurred during admin login. Please try again.');
+            } else if (err.request) {
+                setError('No response from server. Please check your internet connection or try again later.');
             } else {
-                setError('Admin login failed. Please check your credentials.');
+                setError('Error setting up the admin login request. Please try again.');
             }
+        } finally {
+            setLoading(false);
+            console.log('AdminLoginPage: Loading state set to false.');
         }
     };
 
     return (
-        <div className="login-container">
-            <h2>Admin Login</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email" // Use type="email" for better validation
-                        id="email"
-                        name="email"
-                        value={email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={password}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <button type="submit" className="login-button">Login as Admin</button>
-                {error && <p className="error-message">{error}</p>}
-                {successMessage && <p className="success-message">{successMessage}</p>}
-            </form>
-            <p className="register-link">
-                <Link to="/login">Back to Provider Login</Link>
-            </p>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 font-inter">
+            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Admin Login</h2>
+                <form onSubmit={handleSubmit}>
+                    {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
+
+                    <div className="mb-4">
+                        <label htmlFor="adminEmail" className="block text-gray-700 text-sm font-bold mb-2">
+                            Email:
+                        </label>
+                        <input
+                            type="email"
+                            id="adminEmail"
+                            name="adminEmail"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500"
+                            required
+                            autoComplete="username"
+                        />
+                    </div>
+                    <div className="mb-6">
+                        <label htmlFor="adminPassword" className="block text-gray-700 text-sm font-bold mb-2">
+                            Password:
+                        </label>
+                        <input
+                            type="password"
+                            id="adminPassword"
+                            name="adminPassword"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500"
+                            required
+                            autoComplete="current-password"
+                        />
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <button
+                            type="submit"
+                            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition"
+                            disabled={loading}
+                        >
+                            {loading ? 'Logging in...' : 'Login as Admin'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

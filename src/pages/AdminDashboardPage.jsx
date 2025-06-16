@@ -1,7 +1,8 @@
 // src/pages/AdminDashboardPage.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import './AdminDashboardPage.css'; // Import the CSS for Admin Dashboard
+// import { useAuth } from "../context/AuthContext.jsx"; // This import is not used in this component, removing for clarity
+import './AdminDashboardPage.css'; // Import the correct CSS file for Admin Dashboard
 
 const API_BASE_URL = 'http://localhost:5001/api'; // Define your API base URL
 
